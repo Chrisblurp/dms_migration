@@ -49,10 +49,10 @@ resource "aws_security_group_rule" "vpce_allow_bastion" {
 resource "aws_vpc_endpoint" "ssm" {
   depends_on = [aws_vpc.main]
 
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.eu-central-1.ssm"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = [
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.eu-central-1.ssm"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = [
     aws_subnet.private_a.id,
     aws_subnet.private_b.id
   ]
@@ -67,10 +67,10 @@ resource "aws_vpc_endpoint" "ssm" {
 resource "aws_vpc_endpoint" "ssmmessages" {
   depends_on = [aws_vpc.main]
 
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.eu-central-1.ssmmessages"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = [
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.eu-central-1.ssmmessages"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = [
     aws_subnet.private_a.id,
     aws_subnet.private_b.id
   ]
@@ -85,10 +85,10 @@ resource "aws_vpc_endpoint" "ssmmessages" {
 resource "aws_vpc_endpoint" "ec2messages" {
   depends_on = [aws_vpc.main]
 
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.eu-central-1.ec2messages"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = [
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.eu-central-1.ec2messages"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = [
     aws_subnet.private_a.id,
     aws_subnet.private_b.id
   ]
@@ -105,12 +105,12 @@ resource "aws_vpc_endpoint" "ec2messages" {
 resource "aws_vpc_endpoint" "s3" {
 
 
-  vpc_id            = aws_vpc.main.id
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
-  
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
+
   vpc_endpoint_type = "Gateway"
 
-  route_table_ids =  [
+  route_table_ids = [
     aws_vpc.main.default_route_table_id
   ]
 
@@ -125,10 +125,10 @@ resource "aws_vpc_endpoint" "s3" {
 resource "aws_vpc_endpoint" "logs" {
   depends_on = [aws_vpc.main]
 
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.eu-central-1.logs"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = [
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.eu-central-1.logs"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = [
     aws_subnet.private_a.id,
     aws_subnet.private_b.id
   ]

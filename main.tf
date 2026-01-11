@@ -1,8 +1,8 @@
 # vpc and subnets
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
-  enable_dns_hostnames = true  # CRITICAL for VPC endpoints
-  enable_dns_support   = true  # CRITICAL for VPC endpoints
+  enable_dns_hostnames = true # CRITICAL for VPC endpoints
+  enable_dns_support   = true # CRITICAL for VPC endpoints
 
   tags = {
     Name = "dms-vpc"
@@ -156,10 +156,10 @@ resource "aws_db_subnet_group" "db" {
 }
 
 resource "aws_db_instance" "source" {
-  identifier        = "source-db"
-  engine            = "mysql"
-  engine_version    = "8.0"
-  instance_class    = "db.t4g.micro"
+  identifier     = "source-db"
+  engine         = "mysql"
+  engine_version = "8.0"
+  instance_class = "db.t4g.micro"
 
   allocated_storage = 20
 
@@ -170,7 +170,7 @@ resource "aws_db_instance" "source" {
   vpc_security_group_ids = [aws_security_group.db.id]
   db_subnet_group_name   = aws_db_subnet_group.db.name
   skip_final_snapshot    = true
-  
+
   # Enable binary logging for CDC
   enabled_cloudwatch_logs_exports = ["error", "general", "slowquery"]
   backup_retention_period         = 1
@@ -213,14 +213,14 @@ resource "aws_dms_replication_subnet_group" "this" {
 
 # DMS Replication instance
 resource "aws_dms_replication_instance" "this" {
-  replication_instance_id       = "dms-lab-instance"
-  replication_instance_class    = "dms.t3.micro"
-  allocated_storage             = 50
-  vpc_security_group_ids        = [aws_security_group.dms.id]
-  replication_subnet_group_id   = aws_dms_replication_subnet_group.this.replication_subnet_group_id
-  publicly_accessible           = false
-  multi_az                      = false
-  apply_immediately             = true
+  replication_instance_id     = "dms-lab-instance"
+  replication_instance_class  = "dms.t3.micro"
+  allocated_storage           = 50
+  vpc_security_group_ids      = [aws_security_group.dms.id]
+  replication_subnet_group_id = aws_dms_replication_subnet_group.this.replication_subnet_group_id
+  publicly_accessible         = false
+  multi_az                    = false
+  apply_immediately           = true
 
   tags = {
     Name = "dms-replication-instance"
@@ -271,7 +271,7 @@ resource "aws_dms_replication_task" "this" {
   replication_instance_arn = aws_dms_replication_instance.this.replication_instance_arn
   source_endpoint_arn      = aws_dms_endpoint.source.endpoint_arn
   target_endpoint_arn      = aws_dms_endpoint.target.endpoint_arn
-  
+
   table_mappings = jsonencode({
     rules = [
       {
@@ -305,8 +305,8 @@ resource "aws_dms_replication_task" "this" {
       EnableLogging = true
       LogComponents = [
         { Id = "SOURCE_UNLOAD", Severity = "LOGGER_SEVERITY_DEFAULT" },
-        { Id = "TARGET_LOAD",   Severity = "LOGGER_SEVERITY_DEFAULT" },
-        { Id = "TASK_MANAGER",  Severity = "LOGGER_SEVERITY_DEFAULT" }
+        { Id = "TARGET_LOAD", Severity = "LOGGER_SEVERITY_DEFAULT" },
+        { Id = "TASK_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" }
       ]
     }
     ControlTablesSettings = {

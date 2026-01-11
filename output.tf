@@ -141,7 +141,7 @@ output "vpc_endpoints_security_group_id" {
 # Quick Start Commands
 output "quick_start_commands" {
   description = "Quick start commands for testing"
-  value = <<-EOT
+  value       = <<-EOT
     # 1. Connect to bastion via SSM
     aws ssm start-session --target ${aws_instance.bastion.id} --region eu-central-1
     
@@ -169,7 +169,7 @@ output "quick_start_commands" {
 # Verification Commands
 output "verification_commands" {
   description = "Commands to verify the setup"
-  value = <<-EOT
+  value       = <<-EOT
     # Check VPC DNS settings
     aws ec2 describe-vpc-attribute --vpc-id ${aws_vpc.main.id} --attribute enableDnsHostnames
     aws ec2 describe-vpc-attribute --vpc-id ${aws_vpc.main.id} --attribute enableDnsSupport
