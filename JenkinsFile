@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_DEFAULT_REGION = "eu-central-1"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Chrisblurp/dms_migration.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                powershell '''
+                    terraform init -input=false
+                '''
+            }
+        }
+
+        stage('Terraform Format') {
+            steps {
+                powershell '''
+                    terraform fmt -check
+                '''
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                powershell '''
+                    terraform validate
+                '''
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                powershell '''
+                    terraform plan -out=tfplan
+                '''
+            }
+        }
+
+        stage('Approval to Apply') {
+            steps {
+                script {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        input message: "Apply Terraform changes?"
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                powershell '''
+                    terraform apply -auto-approve tfplan
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Terraform apply completed successfully."
+        }
+        failure {
+            echo "Pipeline failed. Check logs."
+        }
+    }
+}
