@@ -14,53 +14,53 @@ pipeline {
             }
         }
 
-        stage('Terraform Init') {
-            steps {
-                powershell '''
-                    terraform init -input=false
-                '''
+        stage('Terraform') {
+            environment {
+                AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
+                AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
             }
-        }
 
-        stage('Terraform Format') {
-            steps {
-                powershell '''
-                    terraform fmt -check
-                '''
-            }
-        }
+            stages {
 
-        stage('Terraform Validate') {
-            steps {
-                powershell '''
-                    terraform validate
-                '''
-            }
-        }
-
-        stage('Terraform Plan') {
-            steps {
-                powershell '''
-                    terraform plan -out=tfplan
-                '''
-            }
-        }
-
-        stage('Approval to Apply') {
-            steps {
-                script {
-                    timeout(time: 10, unit: 'MINUTES') {
-                        input message: "Apply Terraform changes?"
+                stage('Init') {
+                    steps {
+                        powershell 'terraform init -input=false'
                     }
                 }
-            }
-        }
 
-        stage('Terraform Apply') {
-            steps {
-                powershell '''
-                    terraform apply -auto-approve tfplan
-                '''
+                stage('Format') {
+                    steps {
+                        powershell 'terraform fmt -check'
+                    }
+                }
+
+                stage('Validate') {
+                    steps {
+                        powershell 'terraform validate'
+                    }
+                }
+
+                stage('Plan') {
+                    steps {
+                        powershell 'terraform plan -out=tfplan'
+                    }
+                }
+
+                stage('Approval') {
+                    steps {
+                        script {
+                            timeout(time: 10, unit: 'MINUTES') {
+                                input message: "Apply Terraform changes?"
+                            }
+                        }
+                    }
+                }
+
+                stage('Apply') {
+                    steps {
+                        powershell 'terraform apply -auto-approve tfplan'
+                    }
+                }
             }
         }
     }
